@@ -1,5 +1,5 @@
 {
-  "name": "parity-deployer",
+  "name": "parity-toolbox",
   "version": "1.0.0",
   "description": "javascript able to build and deploy a solidity contract in parity",
   "main": "index.js",
@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "parity"
+    "parity", "blockchain", "migrate"
   ],
   "author": "Norgoci Nici Nici",
   "license": "Apache-2.0",
