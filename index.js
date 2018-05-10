@@ -1,31 +1,8 @@
-const solc = require('solc')
-const fs = require('fs');
+let contractFile = "./test/contract.sol";
+// this is the default parity developement account (not for production)
+let account = "0x00a329c0648769a73afac7f9381e08fb43dbea72";
+// default paritiy port
+let nodeURL = "http://localhost:8545";
 
-
-var askForGas = function (bytecode) {
-  return "x22";
-}
-
-var migrate = function(bytecode, gas) {
-  console.log("bytecode :" + bytecode);
-  console.log("gas :" + gas);
-}
-
-fs.readFile('./contract.sol', 'utf8', function(err, data) {
-  if (err) {
-    console.error(err);
-    proces.exit(1);
-  }
-
-  solc.loadRemoteVersion('latest', function(err, solcSnapshot) {
-    if (err) {
-      console.error(err);
-      proces.exit(1);
-    }
-    let compiled = solcSnapshot.compile(data, 1);
-    let bytecode = compiled.contracts[':Migrations'].bytecode;
-    //console.log(bytecode);
-    let gas = askForGas(bytecode);
-    migrate(bytecode, gas);
-  })
-});
+let toolbox = require('./ParityToolbox');
+toolbox.deploy(contractFile, account, nodeURL);

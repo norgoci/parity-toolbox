@@ -14,7 +14,7 @@
   "author": "Norgoci Nici Nici",
   "license": "Apache-2.0",
   "dependencies": {
-    "dotenv": "^5.0.1",
+    "request": "^2.85.0",
     "solc": "^0.4.23"
   }
 }
