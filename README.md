@@ -24,7 +24,7 @@ Alternative you can add the dependency by your own to the
 Once installed you can use it by calling the `deploy` with three arguments:
 the path to the solidity contract (file) to be deployed,
 the parity account responsible for the contract and the URL for your parity node.
-Consider the next example as well.
+Consider the next example as well, or the [example.js](./example.js).
 
 ```javascript
 let contractFile = "./test/contract.sol";
