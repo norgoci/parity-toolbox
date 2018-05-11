@@ -7,22 +7,22 @@ It allows you to compile and migrate a [Solidity](https://solidity.readthedocs.i
 I want to be able to deploy my solidity contracts on parity node automatic,
 (e.g. triggered any change in the contract). I try to use
 [truffle suite](http://truffleframework.com/) but the process froze and after.
-I a small research reveals my that parity has its own an API for this.
+A small research reveals my that parity has its own an API for this.
 I choose nodes/javascript because most of my project are NodeJS based.
-
-I still use truffle suite for the development and I use the toolbox only for
+The truffle suite for the development and I use the toolbox only for
 deployment on parity.
 
 # Usage
 
-Import it by adding it as dependencies to your project with npm with the
-command: `install parity-toolbox --save`
+This project is publish as [npm](https://www.npmjs.com/) package under the name [parity-toolbox](https://www.npmjs.com/package/parity-toolbox).
+In order to use it  you need to import it by adding it as dependencies to your
+npm project with the command: `install parity-toolbox --save`
 or with yarn with command: `yarn install parity-toolbox`.
 Alternative you can add the dependency by your own to the
 [package.json](./package.json).
 
-Once install you can use it by calling the `deploy` with three arguments:
-the path to the solidity file to be deployed,
+Once installed you can use it by calling the `deploy` with three arguments:
+the path to the solidity contract (file) to be deployed,
 the parity account responsible for the contract and the URL for your parity node.
 Consider the next example as well.
 
@@ -33,7 +33,6 @@ let nodeURL = "http://localhost:8545";
 let toolbox = require('./ParityToolbox');
 toolbox.deploy(contractFile, account, nodeURL);
 ```
-
 > Note: your parity node must be stated with the `unlock` option for the given
 account, otherwise you need to use the parity UI to confirm the transaction
 related with the migration. Consider [this stackexchange entry](https://ethereum.stackexchange.com/questions/15467/custom-parity-signer-programmatically-unlock-accounts-for-a-certain-time) for more details.
@@ -48,7 +47,6 @@ The `deploy` method does:
 All this query for gas and the migration are done over the parity JSON-RPC api.
 For more details consider [this article](https://wiki.parity.io/Smart-Contracts)
 as well.
-
 
 ## Usage Locally
 
@@ -68,14 +66,15 @@ npm start
 > node index.js
 
 The contract 0x8f79ea98d36a0232c87c024df7ee23bfe8cb25617e06021a57c560554c745145 was deployed and it cost 0x37766 gas
-
 ```
-
 Output that indicates the amount of gas and your contract address.
-
 
 # Limitations (that far)
 
 For the moment you can deploy only one contract and no dependencies on other
 contracts are supported.
 This features will be added asap.
+
+# Github
+
+The project sources can be found [here](https://github.com/norgoci/parity-toolbox).
