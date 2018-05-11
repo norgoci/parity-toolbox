@@ -103,7 +103,7 @@ var migrate = function (bytecode, gas, account, nodeURL) {
     }
     // console.log(httpResponse);
     let contractAddress = body.result
-    console.log("The conrtact %s was deployed and it cost %s gas", contractAddress, gas);
+    console.log("The contract %s was deployed and it cost %s gas", contractAddress, gas);
   });
 }
 
