@@ -58,7 +58,7 @@ After this run from another terminal `npm start`, this will execute the
 [index.ts](./index.ts) which will deploy the contract [contract.sol](./test/contract.sol)
 in the local parity instance.
 
-if everything runs well you must be able to see in the terminal where you
+If everything runs well you must be able to see in the terminal where you
 invoke `npm start` a similar output:
 
 ```bash
