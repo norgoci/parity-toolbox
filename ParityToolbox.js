@@ -1,4 +1,3 @@
-var exports = module.exports = {};
 const solc = require('solc')
 const fs = require('fs');
 const request = require('request');
