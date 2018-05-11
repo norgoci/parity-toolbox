@@ -15,9 +15,11 @@ deployment on parity.
 
 # Usage
 
-Import it by adding this as dependencies to your project with npm with the
+Import it by adding it as dependencies to your project with npm with the
 command: `install parity-toolbox --save`
 or with yarn with command: `yarn install parity-toolbox`.
+Alternative you can add the dependency by your own to the
+[package.json](./package.json).
 
 Once install you can use it by calling the `deploy` with three arguments:
 the path to the solidity file to be deployed,
