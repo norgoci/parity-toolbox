@@ -6,9 +6,9 @@ It allows you to compile and migrate a [Solidity](https://solidity.readthedocs.i
 
 I want to be able to deploy my solidity contracts on parity node automatic,
 (e.g. triggered any change in the contract). I try to use
-[truffle suite](http://truffleframework.com/) but the process froze and after
-I do a little bit of research I figure it out that parity has an API for this.
-I choose nodeJS/javascript because most of my project are nodeJS based.
+[truffle suite](http://truffleframework.com/) but the process froze and after.
+I a small research reveals my that parity has its own an API for this.
+I choose nodes/javascript because most of my project are NodeJS based.
 
 I still use truffle suite for the development and I use the toolbox only for
 deployment on parity.
@@ -40,10 +40,10 @@ related with the migration. Consider [this stackexchange entry](https://ethereum
 
 ## Logic behind the functionality
 
-The deploy method does:
-1. compiles the contract (something similar with `solc --optimize --abi --bin --metadata YOUR_CONTRACT.sol`)
-2. asks the parity node how much Gas is needed for to migrate given contract.
-3. uses the gas value to migrate the contract in to the given parity node.
+The `deploy` method does:
+1. It compiles the contract (something similar with `solc --optimize --abi --bin --metadata YOUR_CONTRACT.sol`)
+2. It asks the parity node how much Gas is needed for to migrate given contract.
+3. It uses the gas value to migrate the contract in to the given parity node.
 
 All this query for gas and the migration are done over the parity JSON-RPC api.
 For more details consider [this article](https://wiki.parity.io/Smart-Contracts)
@@ -54,20 +54,20 @@ as well.
 
 If you have a local installed parity then you can start it with the command
 `parity --chain dev` or by using the (start-parity.bash)[./start-parity.bash] script.
-After this run from an other terminal `npm start`, this will execute the
+After this run from another terminal `npm start`, this will execute the
 [index.ts](./index.ts) which will deploy the contract [contract.sol](./test/contract.sol)
 in the local parity instance.
 
-if everything runs well you must be able to see in the  terminal where you
+if everything runs well you must be able to see in the terminal where you
 invoke `npm start` a similar output:
 
 ```bash
-npm start                                               17:01:35  4.60G 
+npm start
 
 > parity-toolbox@1.0.0 start /imaginarium/lab0/norg0ci.pr0jects/parity-toolbox
 > node index.js
 
-The conrtact 0x8f79ea98d36a0232c87c024df7ee23bfe8cb25617e06021a57c560554c745145 was deployed and it cost 0x37766 gas
+The contract 0x8f79ea98d36a0232c87c024df7ee23bfe8cb25617e06021a57c560554c745145 was deployed and it cost 0x37766 gas
 
 ```
 
