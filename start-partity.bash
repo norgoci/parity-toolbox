@@ -1,4 +1,4 @@
 #!/bin/bash 
 #set -xv
 
-parity --chain dev
+parity --chain dev --base-dir=./.parity
