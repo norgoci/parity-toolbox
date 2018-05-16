@@ -102,6 +102,10 @@ var migrate = function (bytecode, gas, account, nodeURL) {
     }
     // console.log(httpResponse);
     let contractAddress = body.result
+    if (!contractAddress) {
+      console.error("The conract was not deployed.");
+      return 1;
+    }
     console.log("The contract %s was deployed and it cost %s gas", contractAddress, gas);
   });
 }
