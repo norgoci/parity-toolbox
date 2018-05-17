@@ -109,7 +109,9 @@ var migrate = function (bytecode, gas, account, nodeURL) {
     console.log("The contract was deployed with transaction %s and it cost %s gas", transactionHash, gas);
     let report = {transactionHash: transactionHash, gas: gas, account: account};
     let fs = require('fs');
-    fs.writeFile('deploy-report.json', JSON.stringify(report));
+    fs.writeFile('deploy-report.json', jsonStr, (err) => {
+      if (err) throw err;
+    });
   });
 }
 
