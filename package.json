@@ -1,6 +1,6 @@
 {
   "name": "parity-toolbox",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "javascript able to build and deploy a solidity contract in parity",
   "main": "index.js",
   "scripts": {
