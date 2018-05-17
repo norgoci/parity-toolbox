@@ -101,12 +101,15 @@ var migrate = function (bytecode, gas, account, nodeURL) {
       return;
     }
     // console.log(httpResponse);
-    let contractAddress = body.result
-    if (!contractAddress) {
+    let transactionHash = body.result
+    if (!transactionHash) {
       console.error("The conract was not deployed.");
       return 1;
     }
-    console.log("The contract %s was deployed and it cost %s gas", contractAddress, gas);
+    console.log("The contract was deployed with transaction %s and it cost %s gas", transactionHash, gas);
+    let report = {transactionHash: transactionHash, gas: gas, account: account};
+    let fs = require('fs');
+    fs.writeFile('deploy-report.json', JSON.stringify(report));
   });
 }
 
@@ -135,7 +138,8 @@ exports.deploy = function (solFile, account, nodeURL) {
     }
 
     let compiled = solc.compile(data, 1);
-    let bytecode = compiled.contracts[':Migrations'].bytecode;
+    let contractKey = Object.keys(compiled.contracts)[0];
+    let bytecode = compiled.contracts[contractKey].bytecode;
     estimateGas(bytecode, account, nodeURL, migrate);
   });
 }
