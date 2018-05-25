@@ -44,8 +44,9 @@ function estimateGas(bytecode, account, nodeURL, useGas) {
   }, function (err, httpResponse, body) {
 
     if (err) {
+      // leave the process by error
       console.error(err);
-      return;
+      throw err
     }
 
     let gas = body.result;
@@ -98,13 +99,14 @@ var migrate = function (bytecode, gas, account, nodeURL) {
 
     if (err) {
       console.error(err);
+      throw err
       return;
     }
     // console.log(httpResponse);
     let transactionHash = body.result
     if (!transactionHash) {
       console.error("The conract was not deployed.");
-      return 1;
+      throw "The conract was not deployed.";
     }
     console.log("The contract was deployed with transaction %s and it cost %s gas", transactionHash, gas);
     let report = {transactionHash: transactionHash, gas: gas, account: account};
