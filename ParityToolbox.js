@@ -105,8 +105,8 @@ var migrate = function (bytecode, gas, account, nodeURL) {
     // console.log(httpResponse);
     let transactionHash = body.result
     if (!transactionHash) {
-      console.error("The conract was not deployed.");
-      throw "The conract was not deployed.";
+      console.error("The contract was not deployed.");
+      throw "The contract was not deployed.";
     }
     console.log("The contract was deployed with transaction %s and it cost %s gas", transactionHash, gas);
     let report = {transactionHash: transactionHash, gas: gas, account: account};
