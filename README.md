@@ -62,7 +62,7 @@ invoke `npm start` a similar output:
 ```bash
 npm start
 
-> parity-toolbox@1.0.0 start /imaginarium/lab0/norg0ci.pr0jects/parity-toolbox
+> parity-toolbox@1.0.0 start ..../parity-toolbox
 > node index.js
 
 The contract 0x8f79ea98d36a0232c87c024df7ee23bfe8cb25617e06021a57c560554c745145 was deployed and it cost 0x37766 gas
@@ -78,3 +78,7 @@ This features will be added asap.
 # Github
 
 The project sources can be found [here](https://github.com/norgoci/parity-toolbox).
+
+# Test and example
+
+A test and example is available in the [parity-toolbox-test project](https://github.com/norgoci/parity-toolbox-test)
