@@ -52,12 +52,18 @@ as well.
 
 If you have a local installed parity then you can start it with the command
 `parity --chain dev` or by using the (start-parity.bash)[./start-parity.bash] script.
-After this run from another terminal `npm start`, this will execute the
-[index.ts](./index.ts) which will deploy the contract [contract.sol](./test/contract.sol)
-in the local parity instance.
+Create a deploy script similar with the one in the next code snippet:
+```javascript
+let contractFile = 'contract.sol';
+// this is the default parity development account (not for production)
+let account = '0x00a329c0648769a73afac7f9381e08fb43dbea72';
+let nodeURL = 'http://localhost:8545';
+var toolbox = require('parity-toolbox');
+toolbox.deploy(contractFile, account, nodeURL);
+```
+The semantic of properties is obvious, more this script uses the [development account](https://wiki.parity.io/Private-development-chain). Run the script with `node <YOUR SCRIPT NAME>` and this will deploy the contract in the local parity instance.
 
-If everything runs well you must be able to see in the terminal where you
-invoke `npm start` a similar output:
+If everything runs well you must be able to see a similar output:
 
 ```bash
 npm start
@@ -65,9 +71,12 @@ npm start
 > parity-toolbox@1.0.0 start ..../parity-toolbox
 > node index.js
 
-The contract 0x8f79ea98d36a0232c87c024df7ee23bfe8cb25617e06021a57c560554c745145 was deployed and it cost 0x37766 gas
+The contract was deployed with transaction 0x8f79ea98d36a0232c87c024df7ee23bfe8cb25617e06021a57c560554c745145 and it cost 0x37766 gas
 ```
-Output that indicates the amount of gas and your contract address.
+Output that indicates the amount of gas and the translation hash used to migrate
+(deploy) your contract.
+
+An complete deploy and contract usage can be found in the [parity-toolbox-test proejct](https://github.com/norgoci/parity-toolbox-test).
 
 # Limitations (that far)
 
@@ -78,7 +87,3 @@ This features will be added asap.
 # Github
 
 The project sources can be found [here](https://github.com/norgoci/parity-toolbox).
-
-# Test and example
-
-A test and example is available in the [parity-toolbox-test project](https://github.com/norgoci/parity-toolbox-test)
