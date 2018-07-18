@@ -3,10 +3,10 @@ const fs = require('fs');
 const request = require('request');
 
 /**
- * Builds a JSON used to query parity about the ammount
+ * Builds a JSON used to query parity about the amount
  * of gas required to deploy a contract from a given address.
  * @param {String} bytecode the compiled contract bytecode.
- * @param {String} the address for the user that deployes the contract.
+ * @param {String} the address for the user that deploy the contract.
  */
 function estimateGasQuery(bytecode, forAccount) {
   return {
