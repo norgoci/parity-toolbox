@@ -5,8 +5,9 @@ const request = require('request');
 /**
  * Builds a JSON used to query parity about the amount
  * of gas required to deploy a contract from a given address.
- * @param {String} bytecode the compiled contract bytecode.
- * @param {String} the address for the user that deploy the contract.
+ *
+ * @param  bytecode {string} the compiled contract bytecode.
+ * @param forAccount {string} the address for the user that deploy the contract.
  */
 function estimateGasQuery(bytecode, forAccount) {
   return {
@@ -20,42 +21,50 @@ function estimateGasQuery(bytecode, forAccount) {
   };
 }
 
-function estimateGas(bytecode, account, nodeURL, useGas) {
-
-  if (!bytecode) {
-    console.error("The bytecode argument is not valid.");
-    return;
-  }
-
-  if (!account) {
-    console.error("The account argument is not valid.");
-    return;
-  }
-
-  if (!nodeURL) {
-    console.error("The nodeURL argument is not valid.");
-    return;
-  }
-
-  let estimateGas = estimateGasQuery(bytecode, account);
-  request.post({
-    url: nodeURL,
-    json: estimateGas
-  }, function (err, httpResponse, body) {
-
-    if (err) {
-      // leave the process by error
-      console.error(err);
-      throw err
+/**
+ * Returns a promise able to deliver the amount of needed to deploy the given contract.
+ *
+ * @param bytecode {string} the compiled contract bytecode.
+ * @param account {string} the address for the user that deploy the contract.
+ * @param nodeURL {string} the node where the parity node accepsts incoming requests.
+ * @return {Promise<any>} a promise able to deliver the amount of needed to deploy the given contract.
+ */
+function estimateGas(bytecode, account, nodeURL) {
+  return new Promise(function (resolve, reject) {
+    if (!bytecode) {
+      reject(new Error('The bytecode argument is not valid.'));
     }
 
-    let gas = body.result;
-    if (useGas && typeof useGas === 'function') {
-      useGas(bytecode, gas, account, nodeURL);
+    if (!account) {
+      reject(new Error('The account argument is not valid.'));
     }
+
+    if (!nodeURL) {
+      reject(new Error('The nodeURL argument is not valid.'));
+    }
+
+    const estimateGas = estimateGasQuery(bytecode, account);
+    request.post({
+      url: nodeURL,
+      json: estimateGas
+    }, function (err, httpResponse, body) {
+
+      if (err) {
+        // leave the process by error
+        reject(err);
+      }
+      resolve(body.result);
+    });
   });
 }
 
+/**
+ * Builds a JSON used to deploy a contract in the given parity node.
+ *
+ * @param bytecode {string} the compiled contract bytecode.
+ * @param account {string} the address for the user that deploy the contract.
+ * @param nodeURL {string} the node where the parity node accepsts incoming requests.
+ */
 function migrateQuery(bytecode, gas, account) {
   return {
     "method": "eth_sendTransaction",
@@ -69,81 +78,78 @@ function migrateQuery(bytecode, gas, account) {
   };
 }
 
-var migrate = function (bytecode, gas, account, nodeURL) {
+/**
+ *
+ * @param bytecode
+ * @param gas
+ * @param account
+ * @param nodeURL
+ * @return {Promise<any>}
+ */
+function migrate(bytecode, gas, account, nodeURL) {
 
-  if (!bytecode) {
-    console.error("The bytecode argument is not valid.");
-    return;
-  }
-
-  if (!gas) {
-    console.error("The gas argument is not valid.");
-    return;
-  }
-
-  if (!account) {
-    console.error("The account argument is not valid.");
-    return;
-  }
-
-  if (!nodeURL) {
-    console.error("The nodeURL argument is not valid.");
-    return;
-  }
-
-  let query = migrateQuery(bytecode, gas, account);
-  request.post({
-    url: nodeURL,
-    json: query
-  }, function (err, httpResponse, body) {
-
-    if (err) {
-      console.error(err);
-      throw err
-      return;
+  return new Promise(function (resolve, reject) {
+    if (!bytecode) {
+      reject(new Error('The bytecode argument is not valid.'));
     }
-    // console.log(httpResponse);
-    let transactionHash = body.result
-    if (!transactionHash) {
-      console.error("The contract was not deployed.");
-      throw "The contract was not deployed.";
+
+    if (!account) {
+      reject(new Error('The account argument is not valid.'));
     }
-    console.log("The contract was deployed with transaction %s and it cost %s gas", transactionHash, gas);
-    let report = {transactionHash: transactionHash, gas: gas, account: account};
-    let fs = require('fs');
-    fs.writeFile('deploy-report.json', JSON.stringify(report), (err) => {
-      if (err) throw err;
+
+    if (!nodeURL) {
+      reject(new Error('The nodeURL argument is not valid.'));
+    }
+
+    const query = migrateQuery(bytecode, gas, account);
+    request.post({
+      url: nodeURL,
+      json: query
+    }, function (err, httpResponse, body) {
+
+      if (err) {
+        reject(err);
+      }
+      let transactionHash = body.result
+      if (!transactionHash) {
+        reject(new Error('The conract was not deployed.'));
+      }
+      resolve({transactionHash: transactionHash, gas: gas, account: account});
     });
   });
 }
 
 exports.deploy = function (solFile, account, nodeURL) {
 
-  if (!solFile) {
-    console.error("File to compile found");
-    return 1;
-  }
-
-  if (!account) {
-    console.error("The contract account argument is invalid.");
-    return 1;
-  }
-
-  if (!nodeURL) {
-    console.error("The node URL argument is invalid.");
-    return 1;
-  }
-
-  fs.readFile(solFile, 'utf8', function (err, data) {
-
-    if (err) {
-      console.error(err);
-      proces.exit(1);
+  return new Promise(function (resolve, reject) {
+    if (!solFile) {
+      reject(new Error('The solFile argument is not valid.'));
     }
 
-    let compiled = solc.compile(data, 1);
-    let contractKey = Object.keys(compiled.contracts)[0];
-    let bytecode = compiled.contracts[contractKey].bytecode;
-    estimateGas(bytecode, account, nodeURL, migrate);
+    if (!account) {
+      reject(new Error('The account argument is not valid.'));
+    }
+
+    if (!nodeURL) {
+      reject(new Error('The nodeURL argument is not valid.'));
+    }
+
+    fs.readFile(solFile, 'utf8', function (err, data) {
+      if (err) {
+        reject(err);
+      }
+      const compiled = solc.compile(data, 1);
+      const contractKey = Object.keys(compiled.contracts)[0];
+      const bytecode = compiled.contracts[contractKey].bytecode;
+      estimateGas(bytecode, account, nodeURL)
+        .then(function (gas) {
+          return migrate(bytecode, gas, account, nodeURL);
+        })
+        .then(function (deployRepot) {
+          resolve(deployRepot);
+        }).catch(function (error) {
+          reject(error);
+        });
+    });
   });
 }
