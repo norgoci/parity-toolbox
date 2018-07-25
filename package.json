@@ -1,7 +1,15 @@
 {
   "name": "parity-toolbox",
-  "version": "1.0.7",
-  "description": "javascript able to build and deploy a solidity contract in parity",
+  "version": "2.0.0",
+  "description": "A set of Parity related untilities",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/norgoci/parity-toolbox.git"
+  },
+  "homepage": "https://github.com/norgoci/parity-toolbox/blob/master/README.md",
+  "bugs": {
+    "url": "https://github.com/norgoci/parity-toolbox/issues"
+  },
   "main": "index.js",
   "scripts": {
     "run": "node index.js",
@@ -9,14 +17,18 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "parity",
+    "web3",
     "blockchain",
-    "migrate"
+    "migrate",
+    "contract",
+    "smartcontract",
+    "abi"
   ],
   "author": "Norgoci Nici Nici",
   "license": "Apache-2.0",
   "dependencies": {
     "request": "^2.85.0",
-    "solc": "^0.4.23"
+    "solc": "^0.4.23",
+    "web3": "^1.0.0-beta.34"
   }
 }
