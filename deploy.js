@@ -3,4 +3,6 @@ const contractFile = "./test/contract.sol";
 const account = "0x00a329c0648769a73afac7f9381e08fb43dbea72";
 const nodeURL = "http://localhost:8545";
 const toolbox = require('./index.js');
-toolbox.deployToURL(contractFile, account, nodeURL, [42]).then((deployReport) => {console.log(deployReport)});
+
+toolbox.deployToURL(contractFile, account, nodeURL).then((contractInstance) => {console.log(contractInstance);});
+

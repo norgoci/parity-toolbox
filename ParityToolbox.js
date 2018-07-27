@@ -1,133 +1,59 @@
 const solc = require('solc')
 const fs = require('fs');
-const request = require('request');
 const Web3 = require('web3');
 
-/**
- * Builds a JSON used to query parity about the amount
- * of gas required to deploy a contract from a given address.
- *
- * @param  bytecode {string} the compiled contract bytecode.
- * @param forAccount {string} the address for the user that deploy the contract.
- */
-function estimateGasQuery(bytecode, forAccount) {
-  return {
-    "jsonrpc": "2.0",
-    "method": "eth_estimateGas",
-    "params": [{
-      "from": forAccount,
-      "data": '0x' + bytecode
-    }],
-    "id": 1
-  };
+function estimateGas(web3, abi, bytecode, args = []) {
+
+  if (!web3) {
+    reject(new Error('The web3 argument is not valid.'));
+  }
+
+  if (!abi) {
+    reject(new Error('The abi argument is not valid.'));
+  }
+
+  if (!bytecode) {
+    reject(new Error('The bytecode argument is not valid.'));
+  }
+
+  const contract = new web3.eth.Contract(abi);
+  return contract.deploy({data: '0x' + bytecode, arguments: args}).estimateGas();
 }
 
-/**
- * Returns a promise able to deliver the amount of needed to deploy the given contract.
- *
- * @param bytecode {string} the compiled contract bytecode.
- * @param account {string} the address for the user that deploy the contract.
- * @param nodeURL {string} the node where the parity node accepsts incoming requests.
- * @return {Promise<any>} a promise able to deliver the amount of needed to deploy the given contract.
- */
-function estimateGas(bytecode, account, nodeURL) {
-  return new Promise(function (resolve, reject) {
-    if (!bytecode) {
-      reject(new Error('The bytecode argument is not valid.'));
-    }
+function migrate(web3, abi, bytecode, args, account, gas = 1500000, gasPrice = '30000000000000') {
 
-    if (!account) {
-      reject(new Error('The account argument is not valid.'));
-    }
+  if (!web3) {
+    throw new Error('The web3 argument is not valid.');
+  }
 
-    if (!nodeURL) {
-      reject(new Error('The nodeURL argument is not valid.'));
-    }
+  if (!bytecode) {
+    throw new Error('The bytecode argument is not valid.');
+  }
 
-    const estimateGas = estimateGasQuery(bytecode, account);
-    request.post({
-      url: nodeURL,
-      json: estimateGas
-    }, function (err, httpResponse, body) {
+  if (!args) {
+    throw new Error('The bytecode argument is not valid.');
+  }
 
-      if (err) {
-        // leave the process by error
-        reject(err);
-      }
+  if (!account) {
+    throw new Error('The account argument is not valid.');
+  }
 
-      if (body.error) {
-        reject(body.error);
-      }
+  if (!web3) {
+    throw new Error('The web3 argument is not valid.');
+  }
 
-
-      resolve(body.result);
-    });
-  });
+  const contract = new web3.eth.Contract(abi);
+  return contract.deploy({
+    data: '0x' + bytecode,
+    arguments: args,
+  }).send({
+      from: account,
+      gas: gas,
+      gasPrice: gasPrice
+    })
 }
 
-/**
- * Builds a JSON used to deploy a contract in the given parity node.
- *
- * @param bytecode {string} the compiled contract bytecode.
- * @param account {string} the address for the user that deploy the contract.
- * @param nodeURL {string} the node where the parity node accepsts incoming requests.
- */
-function migrateQuery(bytecode, gas, account) {
-  return {
-    "method": "eth_sendTransaction",
-    "params": [{
-      "from": account,
-      "gas": gas,
-      "data": '0x' + bytecode
-    }],
-    "id": 1,
-    "jsonrpc": "2.0"
-  };
-}
-
-/**
- *
- * @param bytecode
- * @param gas
- * @param account
- * @param nodeURL
- * @return {Promise<any>}
- */
-function migrate(bytecode, gas, account, nodeURL) {
-
-  return new Promise(function (resolve, reject) {
-    if (!bytecode) {
-      reject(new Error('The bytecode argument is not valid.'));
-    }
-
-    if (!account) {
-      reject(new Error('The account argument is not valid.'));
-    }
-
-    if (!nodeURL) {
-      reject(new Error('The nodeURL argument is not valid.'));
-    }
-
-    const query = migrateQuery(bytecode, gas, account);
-    request.post({
-      url: nodeURL,
-      json: query
-    }, function (err, httpResponse, body) {
-
-      if (err) {
-        reject(err);
-      }
-      let transactionHash = body.result
-      if (!transactionHash) {
-        reject(new Error('The contract was not deployed.'));
-      }
-
-      resolve({transactionHash: transactionHash, gas: gas, account: account});
-    });
-  });
-}
-
-exports.deployToWeb3 = function (solFile, account, web3, nodeURL, args = []) {
+exports.deployToWeb3 = function (solFile, account, web3, nodeURL, args = [], gasPrice = '30000000000000') {
   return new Promise(function (resolve, reject) {
     if (!solFile) {
       reject(new Error('The solFile argument is not valid.'));
@@ -155,17 +81,16 @@ exports.deployToWeb3 = function (solFile, account, web3, nodeURL, args = []) {
       }
       const output = solc.compile(data, 1);
       const contractKey = Object.keys(output.contracts)[0];
-      const bytecode = output.contracts[contractKey].bytecode;
-      const abi = JSON.parse(output.contracts[contractKey].interface);
-      const argsByteCode = encodeConstructorParams(web3, abi, args);
-      const allBytecode = bytecode + argsByteCode;
+      const contract = output.contracts[contractKey];
+      const bytecode = contract.bytecode;
+      if (!bytecode) {
+        reject(new Error('The solidity file can not be compiled.'))
+      }
+      const abi = JSON.parse(contract.interface);
 
-      estimateGas(allBytecode, account, nodeURL)
-        .then(function (gas) {
-          return migrate(allBytecode, gas, account, nodeURL);
-        })
-        .then(function (deployRepot) {
-          resolve(deployRepot);
+      estimateGas(web3, abi, bytecode, args, nodeURL)
+        .then(function (error, gas) {
+          resolve(migrate(web3, abi, bytecode, args, account, gas, gasPrice));
         }).catch(function (error) {
           reject(error);
         });
@@ -185,56 +110,6 @@ exports.buildWeb3 = function buildWeb3(web3URL) {
   throw new Error('Protocol not supported for URL:' + web3URL);
 }
 
-exports.deployToURL = function (solFile, account, nodeURL, args = []) {
-  return exports.deployToWeb3(solFile, account, exports.buildWeb3(nodeURL), nodeURL, args);
-}
-
-function getArgumentsType(abi, functionType, params) {
-
-  if (!abi) {
-    throw new Error('The abi argument can not be undefined');
-  }
-
-  if (!functionType) {
-    throw new Error('The functionType argument can not be undefined');
-  }
-
-  if (!params) {
-    throw new Error('The params argument can not be undefined');
-  }
-
-  if (!Array.isArray(params)) {
-    throw new Error('The params argument MUST be an array.');
-  }
-
-  const result = abi.filter(function (json) {
-    const length = json.inputs.length;
-    const isConstructorType = json.type === functionType;
-    const sameArgLength = length === params.length;
-    return isConstructorType && sameArgLength;
-  }).map(function (json) {
-    return json.inputs.map(function (input) {
-      return input.type;
-    });
-  });
-
-  if (result.length != 1) {
-    throw new Error('No constructor found for the given arguments');
-  }
-
-  return result[0];
-};
-
-function getConstructorArgumentsType(abi, params) {
-  return getArgumentsType(abi, 'constructor', params);
-}
-
-function encodeConstructorParams(web3, abi, params) {
-  const constructorArgumentsType = getConstructorArgumentsType(abi, params);
-  const encodeParameters = web3.eth.abi.encodeParameters(constructorArgumentsType, params);
-  const prefix = '0x';
-  if (encodeParameters.startsWith(prefix)) {
-    return encodeParameters.substr(prefix.length);
-  }
-  return encodeParameters;
+exports.deployToURL = function (solFile, account, nodeURL, args = [], gasPrice = '30000000000000') {
+  return exports.deployToWeb3(solFile, account, exports.buildWeb3(nodeURL), nodeURL, args, gasPrice);
 }
