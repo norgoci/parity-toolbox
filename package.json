@@ -1,6 +1,6 @@
 {
   "name": "parity-toolbox",
-  "version": "3.0.0",
+  "version": "1.0.7",
   "description": "A set of Parity related untilities",
   "repository": {
     "type": "git",
