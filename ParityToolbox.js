@@ -82,6 +82,10 @@ exports.deployToWeb3 = function (solFile, account, web3, nodeURL, args = [], gas
       const output = solc.compile(data, 1);
       const contractKey = Object.keys(output.contracts)[0];
       const contract = output.contracts[contractKey];
+      if (!contract) {
+        reject(new Error('Can not read contract file :' + solFile));
+      }
+
       const bytecode = contract.bytecode;
       if (!bytecode) {
         reject(new Error('The solidity file can not be compiled.'))
