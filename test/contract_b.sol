@@ -1,7 +1,7 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.4.21;
 
 
-contract ContractB {
+contract Solution {
 
     uint private solution;
 
@@ -10,6 +10,6 @@ contract ContractB {
     }
 
     function getSolution() public returns (uint) {
-       return solution + 1;
+        return solution;
     }
 }
