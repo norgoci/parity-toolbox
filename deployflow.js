@@ -12,6 +12,9 @@ toolbox.deployToURL(contractAFile, account, nodeURL)
       toolbox.deployToURL("./test/contract_b.sol", account, nodeURL, [solution])
       .then((contractB) => {
         console.log('contract ' + contractBFile + ' was deployed on address:' + contractB.options.address);
+        contractB.methods.getSolution().call().then( function(solution) {
+          console.log('contract ' + contractBFile + ' solution = ' + solution);
+        });
       });
     });
 });
