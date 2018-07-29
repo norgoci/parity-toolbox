@@ -135,10 +135,10 @@ toolbox.deployToURL(contractAFile, account, nodeURL)
 This code snippet is available in the: [ContractB](https://github.com/norgoci/parity-toolbox/blob/master/test/deployflow.js)
 
 If it is not obvious this code snnipet does:
-1. compiles the ContractA and deploys it (before deployment a gas estimation for the deployment id occurs)
+1. compiles the `ContractA` and deploys it (before deployment a gas estimation for the deployment id occurs)
 2. call the method `getSolution` on the ContractA contract instance
-3. use this value to compile and deploy the ContractB (which has a constructor that accept one argument).
-4. calls `getSolution` on the ContractB instance.
+3. use this value to compile and deploy the `ContractB` (which has a constructor that accept one argument).
+4. calls `getSolution` on the `ContractB` instance.
 
 The deployToURL method supports following arguments:
 
