@@ -24,8 +24,8 @@ Both this options introduce code that need to be maintained.
 
 With `parity-toolbox`, you do not need this, you can script your deployment with
 [promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises)
-in the way that fits your need. Or more precisely with `parity-toolbox` you can deploy `ContractA`, 
-call a method on `ContractA` and then use the results to deploy `ContractB`. This case is described 
+in the way that fits your need. Or more precisely with `parity-toolbox` you can deploy `ContractA`,
+call a method on `ContractA` and then use the results to deploy `ContractB`. This case is described
 in details in the `Parity-toolbox-2.xx` section.
 
 This is not a replacement for the [truffle suite](https://truffleframework.com/) it is rather complementary to it.
@@ -125,6 +125,9 @@ toolbox.deployToURL(contractAFile, account, nodeURL)
       toolbox.deployToURL("./test/contract_b.sol", account, nodeURL, [solution])
       .then((contractB) => {
         console.log('contract ' + contractBFile + ' was deployed on address:' + contractB.options.address);
+        contractB.methods.getSolution().call().then( function(solution) {
+          console.log('contract ' + contractBFile + ' solution = ' + solution);
+        });
       });
     });
 });
@@ -135,6 +138,7 @@ If it is not obvious this code snnipet does:
 1. compiles the ContractA and deploys it (before deployment a gas estimation for the deployment id occurs)
 2. call the method `getSolution` on the ContractA contract instance
 3. use this value to compile and deploy the ContractB (which has a constructor that accept one argument).
+4. calls `getSolution` on the ContractB instance.
 
 The deployToURL method supports following arguments:
 
