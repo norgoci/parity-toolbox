@@ -9,12 +9,18 @@ toolbox.deployToURL(contractAFile, account, nodeURL)
     console.log('contract ' + contractAFile + ' was deployed on address:' + contractA.options.address);
     contractA.methods.getSolution().call().then( function(solution) {
       console.log('contract ' + contractAFile + ' solution = ' + solution);
-      toolbox.deployToURL("./test/contract_b.sol", account, nodeURL, [solution])
+      toolbox.deployToURL("./test/contract_b.sol", account, nodeURL, [solution, 'test'])
       .then((contractB) => {
         console.log('contract ' + contractBFile + ' was deployed on address:' + contractB.options.address);
+
         contractB.methods.getSolution().call().then( function(solution) {
           console.log('contract ' + contractBFile + ' solution = ' + solution);
         });
+
+        contractB.methods.getMsg().call().then( function(msg) {
+          console.log('contract ' + contractBFile + ' msg = ' + msg);
+        });
+
       });
     });
 });
