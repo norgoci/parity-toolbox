@@ -122,12 +122,18 @@ toolbox.deployToURL(contractAFile, account, nodeURL)
     console.log('contract ' + contractAFile + ' was deployed on address:' + contractA.options.address);
     contractA.methods.getSolution().call().then( function(solution) {
       console.log('contract ' + contractAFile + ' solution = ' + solution);
-      toolbox.deployToURL("./test/contract_b.sol", account, nodeURL, [solution])
+      toolbox.deployToURL("./test/contract_b.sol", account, nodeURL, [solution, 'test'])
       .then((contractB) => {
         console.log('contract ' + contractBFile + ' was deployed on address:' + contractB.options.address);
+
         contractB.methods.getSolution().call().then( function(solution) {
           console.log('contract ' + contractBFile + ' solution = ' + solution);
         });
+
+        contractB.methods.getMsg().call().then( function(msg) {
+          console.log('contract ' + contractBFile + ' msg = ' + msg);
+        });
+
       });
     });
 });
@@ -137,10 +143,25 @@ This code snippet is available in the: [ContractB](https://github.com/norgoci/pa
 If it is not obvious this code snnipet does:
 1. compiles the `ContractA` and deploys it (before deployment a gas estimation for the deployment id occurs)
 2. call the method `getSolution` on the ContractA contract instance
-3. use this value to compile and deploy the `ContractB` (which has a constructor that accept one argument).
-4. calls `getSolution` on the `ContractB` instance.
+3. use this value to compile and deploy the `ContractB` (which has a constructor that accept two arguments).
+4. calls `getSolution` on the `ContractB` instancev - this is the value provided over the constructor.
+5. calls `getMsg` on the `ContractB` instance  - this is the value provided over the constructor.
 
-The deployToURL method supports following arguments:
+
+## parity-toolbox-2.xx API 
+
+With the version 2.xx provides two deploy methods, the `deployToURL` and `deployToWeb3`
+
+
+The `deployToURL` creates its own [Web3](https://web3js.readthedocs.io/en/1.0/getting-started.html) instance for the given URL.
+Use this method if you do not care about the web3 client. If you want to reuse an already existent web3 instance you may
+ consider the `deployToWeb3` method.
+ 
+Both methods returns a [promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
+that encapsulates a running copy for the deployed contract.
+
+
+The `deployToURL` method supports following arguments:
 
 1. `contractFile` - the path to the solidity file to be deployed, it must be provided.
 2. `account` - the contract owner address, it must be provided.
@@ -148,6 +169,8 @@ The deployToURL method supports following arguments:
 4. `args` - the arguments for the contract constructor, by default an empty array.
 5. `gasPrice` - the gas price to be used for deploy, by default `30000000000000`
 
+
+The `deployToWeb3` is similar, the only difference is that you need to provide the web3 instance.
 
 ## Source Code
 
