@@ -47,13 +47,13 @@ function migrate(web3, abi, bytecode, args, account, gas = 1500000, gasPrice = '
     data: '0x' + bytecode,
     arguments: args,
   }).send({
-      from: account,
-      gas: gas,
-      gasPrice: gasPrice
-    })
+    from: account,
+    gas: gas,
+    gasPrice: gasPrice
+  })
 }
 
-exports.deployToWeb3 = function (solFile, account, web3, nodeURL, args = [], gasPrice = '30000000000000') {
+exports.deployToWeb3 = function (solFile, account, web3, nodeURL, args = [], gas, gasPrice = '30000000000000') {
   return new Promise(function (resolve, reject) {
     if (!solFile) {
       reject(new Error('The solFile argument is not valid.'));
@@ -92,12 +92,17 @@ exports.deployToWeb3 = function (solFile, account, web3, nodeURL, args = [], gas
       }
       const abi = JSON.parse(contract.interface);
 
-      estimateGas(web3, abi, bytecode, args, nodeURL)
-        .then(function (error, gas) {
-          resolve(migrate(web3, abi, bytecode, args, account, gas, gasPrice));
-        }).catch(function (error) {
+      if (gas) {
+        resolve(migrate(web3, abi, bytecode, args, account, gas, gasPrice));
+      } else {
+        estimateGas(web3, abi, bytecode, args, nodeURL)
+          .then(function (error, estimatedGas) {
+            resolve(migrate(web3, abi, bytecode, args, account, estimatedGas, gasPrice));
+          }).catch(function (error) {
           reject(error);
         });
+
+      }
     });
   });
 }
@@ -114,6 +119,6 @@ exports.buildWeb3 = function buildWeb3(web3URL) {
   throw new Error('Protocol not supported for URL:' + web3URL);
 }
 
-exports.deployToURL = function (solFile, account, nodeURL, args = [], gasPrice = '30000000000000') {
-  return exports.deployToWeb3(solFile, account, exports.buildWeb3(nodeURL), nodeURL, args, gasPrice);
+exports.deployToURL = function (solFile, account, nodeURL, args = [], gas, gasPrice = '30000000000000') {
+  return exports.deployToWeb3(solFile, account, exports.buildWeb3(nodeURL), nodeURL, args, gas, gasPrice);
 }

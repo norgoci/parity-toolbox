@@ -10,14 +10,16 @@ const toolbox = require('./ParityToolbox');
  * @param nodeURL {string} the blockchain node where the the contract will be deployed.
  * By default is http://localhost:8545.
  * @param args the arguments for the contract constructor, by default is an empty array.
+ * @param gas {number} the ammount of gas to be use for deploy, if is not defined then the gas will be evaluated.
  * @param gasPrice {string} the gas price used to deploy the contract.
  */
 exports.deployToURL = function(contractFile,
                                account,
                                nodeURL = 'http://localhost:8545',
                                args = [],
+                               gas,
                                gasPrice = '30000000000000') {
-  return toolbox.deployToURL(contractFile, account, nodeURL, args, gasPrice);
+  return toolbox.deployToURL(contractFile, account, nodeURL, args, gas, gasPrice);
 }
 
 /**
@@ -30,6 +32,7 @@ exports.deployToURL = function(contractFile,
  * @param nodeURL {string} the blockchain node where the the contract will be deployed.
  * By default is http://localhost:8545.
  * @param args the arguments for the contract constructor, by default is an empty array.
+ * @param gas {number} the ammount of gas to be use for deploy, if is not defined then the gas will be evaluated.
  * @param gasPrice {string} the gas price used to deploy the contract.
  */
 exports.deployToWeb3 = function(contractFile,
@@ -37,8 +40,9 @@ exports.deployToWeb3 = function(contractFile,
                                 web3,
                                 nodeURL = 'http://localhost:8545',
                                 args = [],
+                                gas,
                                 gasPrice = '30000000000000') {
-  return toolbox.deployToWeb3(contractFile, account, web3, nodeURL, args, gasPrice);
+  return toolbox.deployToWeb3(contractFile, account, web3, nodeURL, args, gas, gasPrice);
 }
 
 /**
