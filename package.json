@@ -27,8 +27,15 @@
   "author": "Norgoci Nici Nici",
   "license": "Apache-2.0",
   "dependencies": {
+    "ganache-cli": "^6.1.6",
     "request": "^2.85.0",
     "solc": "^0.4.23",
     "web3": "^1.0.0-beta.34"
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  },
+  "directories": {
+    "test": "test"
   }
 }
