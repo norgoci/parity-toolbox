@@ -57,22 +57,27 @@ exports.deployToWeb3 = function (solFile, account, web3, nodeURL, args = [], gas
   return new Promise(function (resolve, reject) {
     if (!solFile) {
       reject(new Error('The solFile argument is not valid.'));
+      return;
     }
 
     if (!account) {
       reject(new Error('The account argument is not valid.'));
+      return;
     }
 
     if (!nodeURL) {
       reject(new Error('The nodeURL argument is not valid.'));
+      return;
     }
 
     if (!args) {
-      throw new Error('The args argument can not be undefined');
+      reject(new Error('The args argument can not be undefined'));
+      return;
     }
 
     if (!Array.isArray(args)) {
-      throw new Error('The args argument MUST be an array.');
+      reject(new Error('The args argument MUST be an array.'));
+      return;
     }
 
     fs.readFile(solFile, 'utf8', function (err, data) {
@@ -84,11 +89,13 @@ exports.deployToWeb3 = function (solFile, account, web3, nodeURL, args = [], gas
       const contract = output.contracts[contractKey];
       if (!contract) {
         reject(new Error('Can not read contract file :' + solFile));
+        return;
       }
 
       const bytecode = contract.bytecode;
       if (!bytecode) {
-        reject(new Error('The solidity file can not be compiled.'))
+        reject(new Error('The solidity file can not be compiled.'));
+        return;
       }
       const abi = JSON.parse(contract.interface);
 
@@ -101,7 +108,6 @@ exports.deployToWeb3 = function (solFile, account, web3, nodeURL, args = [], gas
           }).catch(function (error) {
           reject(error);
         });
-
       }
     });
   });
