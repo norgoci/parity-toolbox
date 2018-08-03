@@ -4,3 +4,4 @@
 * 2.0.2 - more documentation, better examples - no functional changes. Broken release.
 * 2.0.3 - more documentation, better examples - no functional changes
 * 2.1.0 - is possible to overwrite the ammount of gas used to deploy, functionality is extended.
+* 2.1.1 - add some unit tests, functionality is not chaged.
