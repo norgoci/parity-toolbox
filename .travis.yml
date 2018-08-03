@@ -1,0 +1,26 @@
+language: node_js
+
+node_js:
+  - 8
+
+services:
+  - docker
+
+before_script:
+  - yarn --version
+  - yarn global add truffle
+  - yarn global add solium
+  - docker run -d --name parity_toolbox_ganache -p 8545:8545 trufflesuite/ganache-cli:latest
+  - node -v
+  - docker ps -a
+
+after_script:
+  - docker stop parity_toolbox_ganache
+  - docker rm parity_toolbox_ganache
+  - docker ps -a
+
+script:
+  - npm test
+
+notifications:
+  email: false
